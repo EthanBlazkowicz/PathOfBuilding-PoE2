@@ -301,7 +301,7 @@ function launch:DownloadPage(url, callback, params)
 		ConPrintf("Download complete. Status: %s", errMsg or "OK")
 		return responseBody, errMsg, responseHeader
 	]]
-	local id = LaunchSubScript(script, "", "ConPrintf", url, params.header, params.body, self.connectionProtocol, self.proxyURL)
+	local id = LaunchSubScript(script, "", "ConPrintf", url, params.header, params.body, self.connectionProtocol, self.proxyURL, self.noSSL)
 	if id then
 		self.subScripts[id] = {
 			type = "DOWNLOAD",
