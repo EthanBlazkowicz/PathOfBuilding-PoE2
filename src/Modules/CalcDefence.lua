@@ -35,6 +35,14 @@ function calcs.hitChance(evasion, accuracy, uncapped)
 	local rawChance = ( accuracy * 1.25 ) / ( accuracy + evasion * 0.3 ) * 100
 	return uncapped and m_max(round(rawChance), 5) or m_max(m_min(round(rawChance), 100), 5)
 end
+-- Calculate monster hit chance
+function calcs.monsterHitChance(evasion, accuracy)
+	if accuracy < 0 then
+		return 5
+	end
+	local rawChance = ( 1 - ( 0.95 * evasion ) / ( evasion + 4 * accuracy ) ) * 100
+	return m_max(m_min(round(rawChance), 100), 5)
+end
 -- Calculate Deflect chance
 function calcs.deflectChance(deflection, accuracy)
 	if deflection < 1 then
@@ -233,7 +241,7 @@ function calcs.doActorLifeManaSpiritReservation(actor)
 					local baseFlatVal = values.baseFlat * mult
 					values.reservedFlat = 0
 					if values.more > 0 and values.inc > -100 and baseFlatVal ~= 0 then
-						values.reservedFlat = m_max(m_ceil(baseFlatVal * (100 + values.inc) / 100 * values.more / (1 + values.efficiency / 100), 0), 0)
+						values.reservedFlat = m_max(round(baseFlatVal * (100 + values.inc) / 100 * values.more / (1 + values.efficiency / 100), 0), 0)
 					end
 				end
 				if activeSkill.skillData[name.."ReservationPercentForced"] then
@@ -251,6 +259,7 @@ function calcs.doActorLifeManaSpiritReservation(actor)
 				end
 				if activeSkill.skillTypes[SkillType.MultipleReservation] then
 					local activeSkillCount, enabled = calcs.getActiveSkillCount(activeSkill)
+					values.count = activeSkillCount
 					local minionFreeSpiritCount = skillModList:Sum("BASE", skillCfg, "MinionFreeSpiritCount")
 					values.reservedFlat = values.reservedFlat * m_max(activeSkillCount - minionFreeSpiritCount, 0)
 				end
@@ -282,6 +291,7 @@ function calcs.doActorLifeManaSpiritReservation(actor)
 							more = values.more ~= 1 and ("x "..values.more),
 							inc = values.inc ~= 0 and ("x "..(1 + values.inc / 100)),
 							efficiency = values.efficiency ~= 0 and ("x " .. round(100 / (100 + values.efficiency), 4)),
+							count = values.count and ("x " ..values.count),
 							total = values.reservedFlat,
 						})
 					end
@@ -1392,11 +1402,11 @@ function calcs.defence(env, actor)
 			local evadeChance = modDB:Sum("BASE", nil, "EvadeChance")
 			local hitChance = calcLib.mod(enemyDB, nil, "HitChance")
 			local evadeMax = modDB:Max(nil, "EvadeChanceMax") or data.misc.EvadeChanceCap
-			output.EvadeChance = 100 - (calcs.hitChance(output.Evasion, enemyAccuracy) - evadeChance) * hitChance
-			output.MeleeEvadeChance = m_max(0, m_min(evadeMax, (100 - (calcs.hitChance(output.MeleeEvasion, enemyAccuracy) - evadeChance) * hitChance) * calcLib.mod(modDB, nil, "EvadeChance", "MeleeEvadeChance")))
-			output.ProjectileEvadeChance = m_max(0, m_min(evadeMax, (100 - (calcs.hitChance(output.ProjectileEvasion, enemyAccuracy) - evadeChance) * hitChance) * calcLib.mod(modDB, nil, "EvadeChance", "ProjectileEvadeChance")))
-			output.SpellEvadeChance = m_max(0, m_min(evadeMax, (100 - (calcs.hitChance(output.SpellEvasion, enemyAccuracy) - evadeChance) * hitChance) * calcLib.mod(modDB, nil, "EvadeChance", "SpellEvadeChance")))
-			output.SpellProjectileEvadeChance = m_max(0, m_min(evadeMax, (100 - (calcs.hitChance(output.SpellProjectileEvasion, enemyAccuracy) - evadeChance) * hitChance) * calcLib.mod(modDB, nil, "EvadeChance", "ProjectileEvadeChance", "SpellProjectileEvadeChance")))
+			output.EvadeChance = 100 - (calcs.monsterHitChance(output.Evasion, enemyAccuracy) - evadeChance) * hitChance
+			output.MeleeEvadeChance = m_max(0, m_min(evadeMax, (100 - (calcs.monsterHitChance(output.MeleeEvasion, enemyAccuracy) - evadeChance) * hitChance) * calcLib.mod(modDB, nil, "EvadeChance", "MeleeEvadeChance")))
+			output.ProjectileEvadeChance = m_max(0, m_min(evadeMax, (100 - (calcs.monsterHitChance(output.ProjectileEvasion, enemyAccuracy) - evadeChance) * hitChance) * calcLib.mod(modDB, nil, "EvadeChance", "ProjectileEvadeChance")))
+			output.SpellEvadeChance = m_max(0, m_min(evadeMax, (100 - (calcs.monsterHitChance(output.SpellEvasion, enemyAccuracy) - evadeChance) * hitChance) * calcLib.mod(modDB, nil, "EvadeChance", "SpellEvadeChance")))
+			output.SpellProjectileEvadeChance = m_max(0, m_min(evadeMax, (100 - (calcs.monsterHitChance(output.SpellProjectileEvasion, enemyAccuracy) - evadeChance) * hitChance) * calcLib.mod(modDB, nil, "EvadeChance", "ProjectileEvadeChance", "SpellProjectileEvadeChance")))
 			-- Condition for displaying evade chance only if melee or projectile evade chance have the same values
 			if output.MeleeEvadeChance ~= output.ProjectileEvadeChance and output.MeleeEvadeChance ~= output.SpellEvadeChance and output.MeleeEvadeChance ~= output.SpellProjectileEvadeChance then
 				output.splitEvade = true
@@ -1604,16 +1614,6 @@ function calcs.defence(env, actor)
 		local recoveryRateMod = output[resource.."RecoveryRateMod"] or 1
 		if modDB:Flag(nil, "No"..resource.."Regen") or modDB:Flag(nil, "CannotGain"..resource) then
 			output[resource.."Regen"] = 0
-		elseif resource == "Life" and modDB:Flag(nil, "ZealotsOath") then
-			output.LifeRegen = 0
-			local lifeBase = modDB:Sum("BASE", nil, "LifeRegen")
-			if lifeBase > 0 then
-				modDB:NewMod("EnergyShieldRegen", "BASE", lifeBase, "Zealot's Oath")
-			end
-			local lifePercent = modDB:Sum("BASE", nil, "LifeRegenPercent")
-			if lifePercent > 0 then
-				modDB:NewMod("EnergyShieldRegenPercent", "BASE", lifePercent, "Zealot's Oath")
-			end
 		else
 			if inc ~= 0 then -- legacy chain breaker increase/decrease regen rate to different resource.
 				for j=i+1,#resources do
@@ -1641,7 +1641,12 @@ function calcs.defence(env, actor)
 		output[resource.."Degen"] = degenRate
 		local recoveryRate = modDB:Sum("BASE", nil, resource.."Recovery") * recoveryRateMod
 		output[resource.."Recovery"] = recoveryRate
-		output[resource.."RegenRecovery"] = (modDB:Flag(nil, "UnaffectedBy"..resource.."Regen") and 0 or regenRate) - degenRate + recoveryRate
+		local overflowRecovery = modDB:Sum("BASE", nil, "Overflow"..resource.."Recovery")
+		output[resource.."RegenRecovery"] = (modDB:Flag(nil, "UnaffectedBy"..resource.."Regen") and 0 or regenRate) - degenRate + recoveryRate + overflowRecovery
+		if resource == "Life" and modDB:Flag(nil, "ZealotsOath") and output[resource.."RegenRecovery"] > 0 then
+			modDB:NewMod("OverflowEnergyShieldRecovery", "BASE", output.LifeRegenRecovery - recoveryRate, "Zealot's Oath")
+			output[resource.."RegenRecovery"] = 0
+		end
 		if output[resource.."RegenRecovery"] > 0 then
 			modDB:NewMod("Condition:CanGain"..resource, "FLAG", true, resourceName.."Regen")
 		end
@@ -1664,7 +1669,14 @@ function calcs.defence(env, actor)
 			end
 			if recoveryRate ~= 0 then
 				t_insert(breakdown[resource.."RegenRecovery"], s_format("+ %.1f ^8(recovery)", recoveryRate))
+				t_insert(breakdown[resource.."RegenRecovery"], s_format("= %.1f ^8per second", output[resource.."RegenRecovery"] - overflowRecovery))
+			end
+			if overflowRecovery ~= 0 then
+				t_insert(breakdown[resource.."RegenRecovery"], s_format("+ %.1f ^8(overflow recovery)", overflowRecovery))
 				t_insert(breakdown[resource.."RegenRecovery"], s_format("= %.1f ^8per second", output[resource.."RegenRecovery"]))
+			end
+			if resource == "Life" and modDB:Flag(nil, "ZealotsOath") then
+				t_insert(breakdown[resource.."RegenRecovery"], s_format("Excess recovery applied to Energy Shield", output[resource.."RegenRecovery"]))
 			end
 		end
 	end

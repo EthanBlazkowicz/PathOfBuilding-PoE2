@@ -913,6 +913,11 @@ skills["SupportBleedPlayerFour"] = {
 			label = "Bleed IV",
 			incrementalEffectiveness = 0.054999999701977,
 			statDescriptionScope = "gem_stat_descriptions",
+			statMap = {
+				["support_bloodlust_melee_physical_damage_+%_final_vs_bleeding_enemies"] = {
+					mod("PhysicalDamage", "MORE", nil, ModFlag.Melee, 0, { type = "ActorCondition", actor = "enemy", var = "Bleeding" }),
+				},
+			},
 			baseFlags = {
 			},
 			constantStats = {
@@ -6606,6 +6611,11 @@ skills["SupportUhtredAuguryPlayer"] = {
 			label = "Uhtred's Augury",
 			incrementalEffectiveness = 0.054999999701977,
 			statDescriptionScope = "gem_stat_descriptions",
+			statMap = {
+				["supported_active_skill_gem_level_+_if_two_other_supports"] = {
+					mod("SupportedGemProperty", "LIST", { keyword = "grants_active_skill", key = "level", value = nil }, 0, 0, { type = "MultiplierThreshold", var = "SupportCount", threshold = 3, equals = true }),
+				},
+			},
 			baseFlags = {
 			},
 			constantStats = {
@@ -6638,6 +6648,11 @@ skills["SupportUhtredExodusPlayer"] = {
 			label = "Uhtred's Exodus",
 			incrementalEffectiveness = 0.054999999701977,
 			statDescriptionScope = "gem_stat_descriptions",
+			statMap = {
+				["supported_active_skill_gem_level_+_if_no_other_supports"] = {
+					mod("SupportedGemProperty", "LIST", { keyword = "grants_active_skill", key = "level", value = nil }, 0, 0, { type = "MultiplierThreshold", var = "SupportCount", threshold = 1, equals = true }),
+				},
+			},
 			baseFlags = {
 			},
 			constantStats = {
@@ -6670,6 +6685,11 @@ skills["SupportUhtredOmenPlayer"] = {
 			label = "Uhtred's Omen",
 			incrementalEffectiveness = 0.054999999701977,
 			statDescriptionScope = "gem_stat_descriptions",
+			statMap = {
+				["supported_active_skill_gem_level_+_if_one_other_support"] = {
+					mod("SupportedGemProperty", "LIST", { keyword = "grants_active_skill", key = "level", value = nil }, 0, 0, { type = "MultiplierThreshold", var = "SupportCount", threshold = 2, equals = true }),
+				},
+			},
 			baseFlags = {
 			},
 			constantStats = {

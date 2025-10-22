@@ -13915,7 +13915,7 @@ return {
 		},
 		[4]={
 			list=false,
-			name="JewelAsset",
+			name="JewelArt",
 			refTo="",
 			type="String",
 			width=560
@@ -17457,6 +17457,20 @@ return {
 			name="StatsValuesAttributes",
 			refTo="",
 			type="Int",
+			width=150
+		},
+		[11]={
+			list=false,
+			name="Limit",
+			refTo="SoulCoreLimits",
+			type="Key",
+			width=150
+		},
+		[12]={
+			list=false,
+			name="",
+			refTo="",
+			type="Key",
 			width=150
 		}
 	},

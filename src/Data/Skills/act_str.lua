@@ -382,8 +382,8 @@ skills["AncestralWarriorTotemPlayer"] = {
 	name = "Ancestral Warrior Totem",
 	baseTypeName = "Ancestral Warrior Totem",
 	color = 1,
-	description = "Consume 3 Endurance Charges to Raise a Totem that uses socketed Mace Skills. This Totem has no Limit. Cannot use Channelling Skills or Skills with Cooldowns.",
-	skillTypes = { [SkillType.SummonsTotem] = true, [SkillType.SummonsAttackTotem] = true, [SkillType.Duration] = true, [SkillType.Melee] = true, [SkillType.Trappable] = true, [SkillType.Mineable] = true, [SkillType.Meta] = true, [SkillType.Area] = true, [SkillType.NoAttackInPlace] = true, [SkillType.HasUsageCondition] = true, [SkillType.RequiresCharges] = true, [SkillType.ConsumesCharges] = true, [SkillType.SkillConsumesEnduranceChargesOnUse] = true, [SkillType.UnlimitedTotems] = true, },
+	description = "Consume 3 Endurance Charges to Raise a Totem that uses socketed Mace Skills. Cannot use Channelling Skills or Skills with Cooldowns.",
+	skillTypes = { [SkillType.SummonsTotem] = true, [SkillType.SummonsAttackTotem] = true, [SkillType.Duration] = true, [SkillType.Melee] = true, [SkillType.Trappable] = true, [SkillType.Mineable] = true, [SkillType.Meta] = true, [SkillType.Area] = true, [SkillType.NoAttackInPlace] = true, [SkillType.HasUsageCondition] = true, [SkillType.RequiresCharges] = true, [SkillType.ConsumesCharges] = true, [SkillType.SkillConsumesEnduranceChargesOnUse] = true, },
 	weaponTypes = {
 		["One Handed Mace"] = true,
 		["Two Handed Mace"] = true,
@@ -449,6 +449,7 @@ skills["AncestralWarriorTotemPlayer"] = {
 				{ "base_totem_range", 60 },
 				{ "ancestral_spirit_base_lockout_time_ms", 600 },
 				{ "active_skill_requires_X_endurance_charges", 3 },
+				{ "non_modifiable_totem_limit", 10 },
 			},
 			stats = {
 				"totem_elemental_resistance_%",
@@ -581,7 +582,7 @@ skills["SupportAncestralWarriorTotemPlayer"] = {
 			baseFlags = {
 			},
 			baseMods = {
-				mod("ActiveTotemLimit", "BASE", 1),
+				mod("ActiveTotemLimit", "OVERRIDE", 10),
 			},
 			constantStats = {
 				{ "skill_disabled_unless_cloned", 2 },
@@ -1264,6 +1265,7 @@ skills["BerserkPlayer"] = {
 skills["BlackPowderBlitzReservationPlayer"] = {
 	name = "Black Powder Blitz",
 	baseTypeName = "Black Powder Blitz",
+	fromItem = true,
 	color = 1,
 	description = "Replaces your dodge roll with an explosive-assisted leap, firing off a round from your prosthetic cannon leg that Blinds and Ignites enemies in the area you escape from. The explosion will cause any Grenades in its area of effect to also explode.",
 	skillTypes = { [SkillType.OngoingSkill] = true, [SkillType.HasReservation] = true, [SkillType.Buff] = true, [SkillType.Persistent] = true, [SkillType.DodgeReplacement] = true, [SkillType.Detonator] = true, },
@@ -1373,6 +1375,7 @@ skills["BlackPowderBlitzReservationPlayer"] = {
 skills["BlackPowderBlitzPlayer"] = {
 	name = "Black Powder Blitz",
 	hidden = true,
+	fromItem = true,
 	skillTypes = { [SkillType.UsableWhileMoving] = true, [SkillType.Cooldown] = true, [SkillType.Travel] = true, [SkillType.CanCancelActions] = true, [SkillType.Area] = true, [SkillType.Damage] = true, [SkillType.Physical] = true, [SkillType.Fire] = true, [SkillType.Jumping] = true, },
 	castTime = 0.7,
 	qualityStats = {
@@ -1625,6 +1628,11 @@ skills["BoneshatterPlayer"] = {
 			baseEffectiveness = 0.18279999494553,
 			incrementalEffectiveness = 0.092720001935959,
 			statDescriptionScope = "boneshatter",
+			statMap = {
+				["boneshatter_damage_+%_final_if_created_from_unique"] = {
+					mod("Damage", "MORE", nil, 0, 0, { type = "ActorCondition", actor = "enemy", var = "Unique" }),
+				},
+			},
 			baseFlags = {
 				attack = true,
 				melee = true,
@@ -4683,6 +4691,7 @@ skills["ToxicGrenadePlayer"] = {
 skills["GeminiSurgePlayer"] = {
 	name = "Gemini Surge",
 	baseTypeName = "Gemini Surge",
+	fromItem = true,
 	color = 1,
 	description = "Grants your weapon Surges. Non-Melee Projectile Attacks with that weapon Consume Surges to cause the Projectiles fired to explode at the end of their flight.",
 	skillTypes = { [SkillType.Attack] = true, [SkillType.Area] = true, [SkillType.Fire] = true, [SkillType.Cold] = true, [SkillType.Triggered] = true, [SkillType.Triggerable] = true, [SkillType.NoAttackOrCastTime] = true, },
@@ -6836,6 +6845,11 @@ skills["FragmentationRoundsPlayer"] = {
 			label = "Vs Frozen",
 			incrementalEffectiveness = 0.054999999701977,
 			statDescriptionScope = "burst_shot_piercing_statset_1",
+			statMap = {
+				["frag_rounds_damage_+%_final_if_created_from_unique"] = {
+					mod("Damage", "MORE", nil, 0, 0, { type = "ActorCondition", actor = "enemy", var = "Unique" }),
+				},
+			},
 			baseFlags = {
 				attack = true,
 				projectile = true,
@@ -10697,6 +10711,11 @@ skills["MagmaBarrierPlayer"] = {
 			label = "Buff",
 			incrementalEffectiveness = 0.054999999701977,
 			statDescriptionScope = "igneous_shield",
+			statMap = {
+				["skill_igneous_shield_grants_block_chance_+%"] = {
+					mod("BlockChance", "INC", nil, 0, 0, { type = "GlobalEffect", effectType = "Buff", effectName = "Magma Barrier" }),
+				},
+			},
 			baseFlags = {
 			},
 			constantStats = {
@@ -14260,6 +14279,7 @@ skills["SuperchargedSlamPlayer"] = {
 skills["MetaCastLightningSpellOnHitPlayer"] = {
 	name = "Thundergod's Wrath",
 	baseTypeName = "Thundergod's Wrath",
+	fromItem = true,
 	color = 1,
 	description = "While active, gains Energy when you Hit enemies with Melee Attacks and triggers socketed Lightning spells on reaching maximum Energy.",
 	skillTypes = { [SkillType.HasReservation] = true, [SkillType.OngoingSkill] = true, [SkillType.Meta] = true, [SkillType.Persistent] = true, [SkillType.Buff] = true, [SkillType.Lightning] = true, [SkillType.CanHaveMultipleOngoingSkillInstances] = true, [SkillType.GeneratesEnergy] = true, [SkillType.Triggers] = true, },
@@ -14374,6 +14394,7 @@ skills["MetaCastLightningSpellOnHitPlayer"] = {
 skills["SupportMetaCastLightningSpellOnHitPlayer"] = {
 	name = "SupportMetaCastLightningSpellOnHitPlayer",
 	hidden = true,
+	fromItem = true,
 	support = true,
 	requireSkillTypes = { SkillType.Spell, SkillType.Triggerable, SkillType.Lightning, SkillType.AND, SkillType.AND, },
 	addSkillTypes = { SkillType.Triggered, SkillType.Cooldown, },
@@ -14600,6 +14621,7 @@ skills["TimeOfNeedPlayer"] = {
 skills["ValakosChargePlayer"] = {
 	name = "Valako's Charge",
 	baseTypeName = "Valako's Charge",
+	fromItem = true,
 	color = 1,
 	description = "While active, taking Lightning damage builds up charge on you. Reaching full charge expends all charge to Trigger this skill, creating a Chaining lightning bolt that arcs to nearby enemies.",
 	skillTypes = { [SkillType.Spell] = true, [SkillType.Damage] = true, [SkillType.Chains] = true, [SkillType.Triggerable] = true, [SkillType.Lightning] = true, [SkillType.UsableWhileMoving] = true, [SkillType.Area] = true, [SkillType.AreaSpell] = true, [SkillType.NoAttackInPlace] = true, [SkillType.Cooldown] = true, [SkillType.InbuiltTrigger] = true, [SkillType.Triggered] = true, [SkillType.NoAttackOrCastTime] = true, },

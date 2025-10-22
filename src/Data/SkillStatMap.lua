@@ -502,7 +502,7 @@ return {
 	mod("ElusiveEffect", "MAX", nil, 0, 0, { type = "GlobalEffect", effectType = "Buff" }),
 },
 ["blind_effect_+%"] = {
-	mod("BlindEffect", "INC", nil, 0, 0, { type = "GlobalEffect", effectType = "Debuff", effectName = "Vaal Blade Flurry" }),
+	mod("BlindEffect", "INC", nil, 0, 0, { type = "GlobalEffect", effectType = "Debuff" }),
 },
 ["global_chance_to_blind_on_hit_%"] = {
 	mod("BlindChance", "BASE", nil),
@@ -534,7 +534,8 @@ return {
 },
 ["skill_speed_+%"] = {
 	mod("Speed", "INC", nil),
-	mod("WarcrySpeed", "INC", nil),
+	mod("WarcrySpeed", "INC", nil, 0, KeywordFlag.Warcry),
+	mod("TotemPlacementSpeed", "INC", nil),
 },
 ["cast_speed_+%_granted_from_skill"] = {
 	mod("Speed", "INC", nil, ModFlag.Cast),
@@ -753,6 +754,9 @@ return {
 ["physical_damage_+%"] = {
 	mod("PhysicalDamage", "INC", nil),
 },
+["active_skill_physical_damage_+%_final"] = {
+	mod("PhysicalDamage", "MORE", nil),
+},
 ["lightning_damage_+%"] = {
 	mod("LightningDamage", "INC", nil),
 },
@@ -762,8 +766,14 @@ return {
 ["cold_damage_+%"] = {
 	mod("ColdDamage", "INC", nil),
 },
+["active_skill_cold_damage_+%_final"] = {
+	mod("ColdDamage", "MORE", nil),
+},
 ["fire_damage_+%"] = {
 	mod("FireDamage", "INC", nil),
+},
+["active_skill_fire_damage_+%_final"] = {
+	mod("FireDamage", "MORE", nil),
 },
 ["chaos_damage_+%"] = {
 	mod("ChaosDamage", "INC", nil),
@@ -1962,6 +1972,9 @@ return {
 ["off_hand_base_weapon_attack_duration_ms"] = {
 	skill("setOffHandAttackTime", nil),
 },
+["base_skill_sources_hollow_palm_physical_damage"] = {
+	flag("UseHollowPalmDamage"),
+},
 ["off_hand_minimum_added_physical_damage_per_15_shield_armour_and_evasion_rating"] = {
 	mod("PhysicalMin", "BASE", nil, 0, 0, { type = "Condition", var = "OffHandAttack" }, { type = "PerStat", statList = { "ArmourOnWeapon 2", "EvasionOnWeapon 2" }, div = 15, }),
 },
@@ -1985,6 +1998,12 @@ return {
 },
 ["off_hand_maximum_added_fire_damage_per_15_shield_armour"] = {
 	mod("FireMax", "BASE", nil, 0, 0, { type = "Condition", var = "OffHandAttack" }, { type = "PerStat", stat = "ArmourOnWeapon 2", div = 15 }),
+},
+["off_hand_minimum_added_fire_damage_per_15_shield_evasion"] = {
+	mod("FireMin", "BASE", nil, 0, 0, { type = "Condition", var = "OffHandAttack" }, { type = "PerStat", stat = "EvasionOnWeapon 2", div = 15 }),
+},
+["off_hand_maximum_added_fire_damage_per_15_shield_evasion"] = {
+	mod("FireMax", "BASE", nil, 0, 0, { type = "Condition", var = "OffHandAttack" }, { type = "PerStat", stat = "EvasionOnWeapon 2", div = 15 }),
 },
 ["off_hand_minimum_added_physical_damage_per_15_shield_armour"] = {
 	mod("PhysicalMin", "BASE", nil, 0, 0, { type = "Condition", var = "OffHandAttack" }, { type = "PerStat", stat = "ArmourOnWeapon 2", div = 15 }),
@@ -2180,6 +2199,9 @@ return {
 },
 ["base_number_of_totems_allowed"] = {
 	mod("ActiveTotemLimit", "BASE", nil),
+},
+["non_modifiable_totem_limit"] = {
+	mod("ActiveTotemLimit", "OVERRIDE", nil),
 },
 ["summon_totem_cast_speed_+%"] = {
 	mod("TotemPlacementSpeed", "INC", nil),
@@ -2386,6 +2408,9 @@ return {
 },
 ["minion_command_skill_cooldown_speed_+%"] = {
 	mod("MinionModifier", "LIST", { mod = mod("CooldownRecovery", "INC", nil, 0, 0, {type = "Condition", var = "CommandableSkill"}) }),
+},
+["is_resummoning_minion"] = {
+	flag("RevivingMinion")
 },
 --Golem
 ["golem_buff_effect_+%"] = {

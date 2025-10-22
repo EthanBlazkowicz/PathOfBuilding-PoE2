@@ -40,7 +40,7 @@ statMap = {
 		mod("Speed", "MORE", nil, ModFlag.Attack),
 	},
 },
-#baseMod mod("ActiveTotemLimit", "BASE", 1)
+#baseMod mod("ActiveTotemLimit", "OVERRIDE", 10)
 #mods
 #skillEnd
 
@@ -100,12 +100,14 @@ statMap = {
 #mods
 #skillEnd
 
+#from item
 #skill BlackPowderBlitzReservationPlayer
 #set BlackPowderBlitzReservationPlayer
 #flags
 #mods
 #skillEnd
 
+#from item
 #skill BlackPowderBlitzPlayer
 #set BlackPowderBlitzPlayer
 #flags hit area
@@ -118,6 +120,11 @@ statMap = {
 #mods
 #set BoneshatterShockwavePlayer
 #flags attack melee area
+statMap = {
+	["boneshatter_damage_+%_final_if_created_from_unique"] = {
+		mod("Damage", "MORE", nil, 0, 0, { type = "ActorCondition", actor = "enemy", var = "Unique" }),
+	},
+},
 #mods
 #skillEnd
 
@@ -327,6 +334,7 @@ statMap = {
 #mods
 #skillEnd
 
+#from item
 #skill GeminiSurgePlayer
 #set GeminiSurgeColdPlayer
 #flags attack area
@@ -439,6 +447,11 @@ statMap = {
 #mods
 #set FragmentationRoundsFreezeShatterPlayer
 #flags attack projectile area
+statMap = {
+	["frag_rounds_damage_+%_final_if_created_from_unique"] = {
+		mod("Damage", "MORE", nil, 0, 0, { type = "ActorCondition", actor = "enemy", var = "Unique" }),
+	},
+},
 #mods
 #skillEnd
 
@@ -627,6 +640,11 @@ statMap = {
 #skill MagmaBarrierPlayer
 #set MagmaBarrierPlayer
 #flags
+statMap = {
+	["skill_igneous_shield_grants_block_chance_+%"] = {
+		mod("BlockChance", "INC", nil, 0, 0, { type = "GlobalEffect", effectType = "Buff", effectName = "Magma Barrier" }),
+	},
+},
 #mods
 #skillEnd
 
@@ -842,12 +860,14 @@ statMap = {
 #mods
 #skillEnd
 
+#from item
 #skill MetaCastLightningSpellOnHitPlayer
 #set MetaCastLightningSpellOnHitPlayer
 #flags
 #mods
 #skillEnd
 
+#from item
 #skill SupportMetaCastLightningSpellOnHitPlayer
 #set SupportMetaCastLightningSpellOnHitPlayer
 #flags
@@ -860,6 +880,7 @@ statMap = {
 #mods
 #skillEnd
 
+#from item
 #skill ValakosChargePlayer
 #set ValakosChargePlayer
 #flags area

@@ -652,7 +652,11 @@ function PassiveTreeViewClass:Draw(build, viewPort, inputEvents)
 
 				local socket, jewel = build.itemsTab:GetSocketAndJewelForNodeID(nodeId)
 				if isAlloc and jewel then
-					overlay = jewel.baseName
+					if jewel.rarity == "UNIQUE" then
+						overlay = jewel.title
+					else
+						overlay = jewel.baseName
+					end
 				end
 			elseif node.type == "OnlyImage" then
 				-- This is the icon that appears in the center of many groups
@@ -1177,7 +1181,7 @@ end
 
 function PassiveTreeViewClass:AddNodeTooltip(tooltip, node, build, incSmallPassiveSkillEffect)
 	-- Special case for sockets
-	if node.type == "Socket" and node.alloc then
+	if (node.type == "Socket" or node.containJewelSocket) and node.alloc then
 		local socket, jewel = build.itemsTab:GetSocketAndJewelForNodeID(node.id)
 		if jewel then
 			build.itemsTab:AddItemTooltip(tooltip, jewel, { nodeId = node.id })
@@ -1243,23 +1247,25 @@ function PassiveTreeViewClass:AddNodeTooltip(tooltip, node, build, incSmallPassi
 			end
 			
 			-- Apply Inc Node scaling from Hulking Form + Radius Jewels only visually
-			if (incSmallPassiveSkillEffect + localIncEffect) > 0 and (node.type == "Normal" or node.type == "Notable") and not node.isAttribute and not node.ascendancyName and node.mods[i].list then
+			if (((incSmallPassiveSkillEffect + localIncEffect) > 0 and node.type == "Normal") or (localIncEffect > 0 and node.type == "Notable")) and not node.isAttribute and not node.ascendancyName and node.mods[i].list then
 				local scale = 1 + (node.type == "Normal" and incSmallPassiveSkillEffect or 0 + localIncEffect) / 100
 				local modsList = copyTable(node.mods[i].list)
 				local scaledList = new("ModList")
-				-- some passive node mods are only Condition/Flag and have no value to scale by default, grab number from line
-				if modsList[1] and modsList[1].type == "FLAG" then
-					modsList[1].value = tonumber(line:match("%d+"))
-				end
 				scaledList:ScaleAddList(modsList, scale)
 				for j, mod in ipairs(scaledList) do
-					local newValue = 0
+					local newValue
 					if type(mod.value) == "number" then
 						newValue = mod.value
 					elseif type(mod.value) == "table" then
-						newValue = mod.value.mod.value
+						if mod.value.mod then
+							newValue = mod.value.mod.value
+						else
+							newValue = mod.value.value
+						end
 					end
-					line = line:gsub("%d*%.?%d+", math.abs(newValue))
+					if type(newValue) == "number" then
+						line = line:gsub("%d*%.?%d+", math.abs(newValue), 1) -- Only scale first number in line
+					end
 				end
 				-- line = line .. "  ^8(Effect increased by "..incSmallPassiveSkillEffect.."%)"
 			end
@@ -1374,7 +1380,7 @@ function PassiveTreeViewClass:AddNodeTooltip(tooltip, node, build, incSmallPassi
 		end
 	end
 
-	if node.containJewelSocket then
+	if node.containJewelSocket and node.alloc then
 		tooltip:AddSeparator(14)
 		-- Jewel socket with a jewel in it, show the jewel tooltip instead of the node tooltip
 		local socket, jewel = build.itemsTab:GetSocketAndJewelForNodeID(node.id)
@@ -1456,9 +1462,17 @@ function PassiveTreeViewClass:AddNodeTooltip(tooltip, node, build, incSmallPassi
 			end
 		end
 	end
+	local goldCost = data.goldRespecPrices[build.characterLevel]
+	if node.ascendancyName then
+		goldCost = goldCost * 5
+	end
 	if node.depends and #node.depends > 1 then
 		tooltip:AddSeparator(14)
 		tooltip:AddLine(14, "^7"..#node.depends .. " points gained from unallocating these nodes")
+		tooltip:AddLine(14, "^xFFD700"..formatNumSep(#node.depends * goldCost) .. " Gold ^7required to unallocate these nodes")
+		tooltip:AddLine(14, colorCodes.TIP)
+	elseif node.alloc then
+		tooltip:AddLine(14, "^xFFD700"..formatNumSep(#node.depends * goldCost) .. " Gold ^7required to unallocate this node")
 		tooltip:AddLine(14, colorCodes.TIP)
 	end
 

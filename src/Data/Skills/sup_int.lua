@@ -2049,6 +2049,11 @@ skills["SupportEmbitterPlayer"] = {
 			label = "Embitter",
 			incrementalEffectiveness = 0.054999999701977,
 			statDescriptionScope = "gem_stat_descriptions",
+			statMap = {
+				["all_damage_gained_as_cold_instead"] = {
+					flag("DamageGainIsOnlyCold"),
+				},
+			},
 			baseFlags = {
 			},
 			stats = {
@@ -2611,6 +2616,11 @@ skills["SupportFocusedCursePlayer"] = {
 			label = "Focused Curse",
 			incrementalEffectiveness = 0.054999999701977,
 			statDescriptionScope = "gem_stat_descriptions",
+			statMap = {
+				["support_focus_curse_curse_delay_+%_final"] = {
+					mod("CurseDelay", "MORE", nil),
+				},
+			},
 			baseFlags = {
 			},
 			constantStats = {
@@ -2923,7 +2933,7 @@ skills["SupportFleetingRemnantsPlayer"] = {
 			baseFlags = {
 			},
 			constantStats = {
-				{ "remnant_pickup_range_+%", 100 },
+				{ "remnant_pickup_range_+%", 35 },
 			},
 			stats = {
 			},
@@ -2953,7 +2963,7 @@ skills["SupportFleetingRemnantsPlayerTwo"] = {
 			baseFlags = {
 			},
 			constantStats = {
-				{ "remnant_pickup_range_+%", 100 },
+				{ "remnant_pickup_range_+%", 35 },
 				{ "chance_%_to_create_additional_remnant", 20 },
 			},
 			stats = {
@@ -3581,7 +3591,7 @@ skills["TriggeredLivingLightningPlayer"] = {
 	minionList = {
 		"LivingLightning",
 	},
-	skillTypes = { [SkillType.Triggered] = true, [SkillType.Triggerable] = true, [SkillType.Minion] = true, [SkillType.Lightning] = true, [SkillType.SkillGrantedBySupport] = true, [SkillType.Limit] = true, [SkillType.Duration] = true, [SkillType.SingleLevelSkill] = true, [SkillType.MinionsAreUndamagable] = true, [SkillType.CreatesMinion] = true, },
+	skillTypes = { [SkillType.Triggered] = true, [SkillType.Triggerable] = true, [SkillType.Minion] = true, [SkillType.Lightning] = true, [SkillType.SkillGrantedBySupport] = true, [SkillType.Limit] = true, [SkillType.Duration] = true, [SkillType.SingleLevelSkill] = true, [SkillType.MinionsAreUndamagable] = true, [SkillType.CreatesMinion] = true, [SkillType.Cooldown] = true, },
 	castTime = 1,
 	qualityStats = {
 	},
@@ -3656,7 +3666,7 @@ skills["TriggeredLivingLightningPlayerTwo"] = {
 	minionList = {
 		"LivingLightning",
 	},
-	skillTypes = { [SkillType.Triggered] = true, [SkillType.Triggerable] = true, [SkillType.Minion] = true, [SkillType.Lightning] = true, [SkillType.SkillGrantedBySupport] = true, [SkillType.Limit] = true, [SkillType.Duration] = true, [SkillType.SingleLevelSkill] = true, [SkillType.MinionsAreUndamagable] = true, [SkillType.CreatesMinion] = true, },
+	skillTypes = { [SkillType.Triggered] = true, [SkillType.Triggerable] = true, [SkillType.Minion] = true, [SkillType.Lightning] = true, [SkillType.SkillGrantedBySupport] = true, [SkillType.Limit] = true, [SkillType.Duration] = true, [SkillType.SingleLevelSkill] = true, [SkillType.MinionsAreUndamagable] = true, [SkillType.CreatesMinion] = true, [SkillType.Cooldown] = true, },
 	castTime = 1,
 	qualityStats = {
 	},
@@ -3762,7 +3772,7 @@ skills["SupportMagneticRemnantsPlayer"] = {
 			baseFlags = {
 			},
 			constantStats = {
-				{ "remnant_pickup_range_+%", 100 },
+				{ "remnant_pickup_range_+%", 35 },
 			},
 			stats = {
 			},
@@ -3823,7 +3833,7 @@ skills["SupportMagnifiedAreaPlayerTwo"] = {
 			incrementalEffectiveness = 0.092720001935959,
 			statDescriptionScope = "gem_stat_descriptions",
 			statMap = {
-				["support_area_concentrate_area_damage_+%_final"] = {
+				["support_increased_area_damage_+%_final"] = {
 					mod("Damage", "MORE", nil, ModFlag.Area),
 				},
 			},
@@ -5561,7 +5571,7 @@ skills["SupportZenithPlayer"] = {
 }
 skills["SupportZenithPlayerTwo"] = {
 	name = "Zenith II",
-	description = "Supports Spell Skills. Supported Skills deal more damage while you are above 90% of your Maximum Mana, and Recoup a portion of Skill costs as Mana. Does not modify Skills used by Minions.",
+	description = "Supports Spell Skills. Supported Skills deal more damage while you are above 90% of your Maximum Mana, and Recoup a portion of their Mana cost. Does not modify Skills used by Minions.",
 	color = 3,
 	support = true,
 	requireSkillTypes = { SkillType.Spell, SkillType.Damage, SkillType.AND, SkillType.DegenOnlySpellDamage, },

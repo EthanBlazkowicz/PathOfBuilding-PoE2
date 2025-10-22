@@ -1204,6 +1204,7 @@ skills["BlinkReservationPlayer"] = {
 			},
 			stats = {
 				"base_deal_no_damage",
+				"display_skill_reserves_in_all_weapon_sets",
 			},
 			levels = {
 				[1] = { actorLevel = 1, },
@@ -1799,8 +1800,8 @@ skills["BonestormPlayer"] = {
 		[40] = { critChance = 15, levelRequirement = 90, cost = { ManaPerMinute = 21924, }, },
 	},
 			preDamageFunc = function(activeSkill, output)
-				activeSkill.skillData.hitTimeMultiplier = activeSkill.skillModList:Sum("BASE", activeSkill.skillCfg, "Multiplier:BonestormStage") / output.ProjectileCount or 1
-				activeSkill.skillData.channelTimeMultiplier = activeSkill.skillModList:Sum("BASE", activeSkill.skillCfg, "Multiplier:BonestormStage") / output.ProjectileCount or 1
+				activeSkill.skillData.hitTimeMultiplier = math.ceil(activeSkill.skillModList:Sum("BASE", activeSkill.skillCfg, "Multiplier:BonestormStage") / output.ProjectileCount or 1)
+				activeSkill.skillData.channelTimeMultiplier = math.ceil(activeSkill.skillModList:Sum("BASE", activeSkill.skillCfg, "Multiplier:BonestormStage") / output.ProjectileCount or 1)
 				activeSkill.skillData.dpsMultiplier = activeSkill.skillModList:Sum("BASE", activeSkill.skillCfg, "Multiplier:BonestormStage")
 			end,
 	statSets = {
@@ -3084,6 +3085,8 @@ skills["ChargeRegulationPlayer"] = {
 			statMap = {
 				["charge_mastery_skill_speed_+%_final_with_frenzy_charges"] = {
 					mod("Speed", "MORE", nil, 0, 0, { type = "StatThreshold", stat = "FrenzyCharges", threshold = 1 }, { type = "GlobalEffect", effectType = "Buff", effectName = "Charge Infusion" }),
+					mod("WarcrySpeed", "MORE", nil, 0, KeywordFlag.Warcry, { type = "StatThreshold", stat = "FrenzyCharges", threshold = 1 }, { type = "GlobalEffect", effectType = "Buff", effectName = "Charge Infusion" }),
+					mod("TotemPlacementSpeed", "MORE", nil, 0, 0, { type = "StatThreshold", stat = "FrenzyCharges", threshold = 1 }, { type = "GlobalEffect", effectType = "Buff", effectName = "Charge Infusion" }),
 				},
 				["charge_mastery_crit_chance_+%_final_with_power_charges"] = {
 					mod("CritChance", "MORE", nil, 0, 0, { type = "StatThreshold", stat = "PowerCharges", threshold = 1 }, { type = "GlobalEffect", effectType = "Buff", effectName = "Charge Infusion" }),
@@ -3909,6 +3912,7 @@ skills["ConvalescencePlayer"] = {
 			},
 			stats = {
 				"base_deal_no_damage",
+				"display_skill_reserves_in_all_weapon_sets",
 			},
 			levels = {
 				[1] = { actorLevel = 1, },
@@ -4077,6 +4081,7 @@ skills["ConvalescenceActivePlayer"] = {
 skills["CracklingPalmPlayer"] = {
 	name = "Crackling Palm",
 	baseTypeName = "Crackling Palm",
+	fromItem = true,
 	color = 3,
 	description = "When you Hit with Unarmed Melee Attacks, calls down lightning bolts which deal Unarmed Attack damage to all surrounding enemies.",
 	skillTypes = { [SkillType.Buff] = true, [SkillType.HasReservation] = true, [SkillType.Area] = true, [SkillType.Lightning] = true, [SkillType.Attack] = true, [SkillType.OngoingSkill] = true, [SkillType.Persistent] = true, [SkillType.NoAttackOrCastTime] = true, },
@@ -4256,6 +4261,7 @@ skills["CracklingPalmPlayer"] = {
 skills["MetaCastCurseOnBlockPlayer"] = {
 	name = "Curse on Block",
 	baseTypeName = "Curse on Block",
+	fromItem = true,
 	color = 3,
 	description = "While active, gains Energy when you Block and triggers socketed Curses on reaching maximum Energy.",
 	skillTypes = { [SkillType.HasReservation] = true, [SkillType.OngoingSkill] = true, [SkillType.Meta] = true, [SkillType.Persistent] = true, [SkillType.Buff] = true, [SkillType.CanHaveMultipleOngoingSkillInstances] = true, [SkillType.GeneratesEnergy] = true, [SkillType.Triggers] = true, },
@@ -4369,6 +4375,7 @@ skills["MetaCastCurseOnBlockPlayer"] = {
 skills["SupportMetaCastCurseOnBlockPlayer"] = {
 	name = "SupportMetaCastCurseOnBlockPlayer",
 	hidden = true,
+	fromItem = true,
 	support = true,
 	requireSkillTypes = { SkillType.AppliesCurse, SkillType.Triggerable, SkillType.AND, },
 	addSkillTypes = { SkillType.Triggered, SkillType.Cooldown, },
@@ -6906,6 +6913,7 @@ skills["FallingThunderPlayer"] = {
 skills["FeastOfFleshPlayer"] = {
 	name = "Feast of Flesh",
 	baseTypeName = "Feast of Flesh",
+	fromItem = true,
 	color = 3,
 	description = "Consume Corpses near you to recover Life and Mana over a short time per Corpse Consumed.",
 	skillTypes = { [SkillType.Spell] = true, [SkillType.Area] = true, [SkillType.Triggerable] = true, [SkillType.AreaSpell] = true, [SkillType.Nova] = true, [SkillType.NoAttackInPlace] = true, [SkillType.Unleashable] = true, [SkillType.Buff] = true, },
@@ -7597,7 +7605,6 @@ skills["FirestormPlayer"] = {
 				"base_skill_show_average_damage_instead_of_dps",
 				"is_area_damage",
 				"can_perform_skill_while_moving",
-				"never_ignite",
 				"quality_display_active_skill_base_area_of_effect_radius_is_gem",
 				"active_skill_consumes_a_cold_infusion",
 				"active_skill_consumes_a_fire_infusion",
@@ -7683,7 +7690,6 @@ skills["FirestormPlayer"] = {
 				"base_skill_show_average_damage_instead_of_dps",
 				"is_area_damage",
 				"can_perform_skill_while_moving",
-				"never_ignite",
 				"quality_display_active_skill_base_area_of_effect_radius_is_gem",
 				"active_skill_consumes_a_cold_infusion",
 				"active_skill_consumes_a_fire_infusion",
@@ -7772,7 +7778,6 @@ skills["FirestormPlayer"] = {
 				"base_skill_show_average_damage_instead_of_dps",
 				"is_area_damage",
 				"can_perform_skill_while_moving",
-				"never_ignite",
 				"quality_display_active_skill_base_area_of_effect_radius_is_gem",
 				"active_skill_consumes_a_cold_infusion",
 				"active_skill_consumes_a_fire_infusion",
@@ -9956,6 +9961,7 @@ skills["FrozenLocusPlayer"] = {
 skills["FulminationPlayer"] = {
 	name = "Fulmination",
 	baseTypeName = "Fulmination",
+	fromItem = true,
 	color = 3,
 	description = "While active, the first time any Skill Hits a Shocked enemy in your Presence, that Skill also Hits other Shocked enemies in your Presence, up to a maximum.",
 	skillTypes = { [SkillType.Buff] = true, [SkillType.HasReservation] = true, [SkillType.Aura] = true, [SkillType.OngoingSkill] = true, [SkillType.Persistent] = true, [SkillType.AffectsPresence] = true, [SkillType.Damage] = true, [SkillType.NoAttackInPlace] = true, [SkillType.NoAttackOrCastTime] = true, [SkillType.Lightning] = true, },
@@ -14115,7 +14121,7 @@ skills["LightningWarpPlayer"] = {
 	baseTypeName = "Lightning Warp",
 	color = 3,
 	description = "Teleport inside the target's body, causing it to violently explode. Highlights enemies that can be Culled, and can only be used on these enemies or Ball Lightning Projectiles. The target is destroyed, and the explosion deals Lightning damage to surrounding enemies. If targeting an enemy, the explosion also creates Shocked Ground. Creates a Lightning Infusion on successful use.",
-	skillTypes = { [SkillType.Spell] = true, [SkillType.Damage] = true, [SkillType.Area] = true, [SkillType.Duration] = true, [SkillType.Trappable] = true, [SkillType.Totemable] = true, [SkillType.Mineable] = true, [SkillType.Triggerable] = true, [SkillType.Lightning] = true, [SkillType.AreaSpell] = true, [SkillType.Multicastable] = true, [SkillType.Unleashable] = true, [SkillType.UsableWhileMoving] = true, [SkillType.CreatesGroundEffect] = true, [SkillType.NoAttackInPlace] = true, [SkillType.GeneratesInfusion] = true, [SkillType.Movement] = true, [SkillType.GeneratesRemnants] = true, },
+	skillTypes = { [SkillType.Spell] = true, [SkillType.Damage] = true, [SkillType.Area] = true, [SkillType.Duration] = true, [SkillType.Trappable] = true, [SkillType.Totemable] = true, [SkillType.Mineable] = true, [SkillType.Triggerable] = true, [SkillType.Lightning] = true, [SkillType.AreaSpell] = true, [SkillType.Multicastable] = true, [SkillType.Unleashable] = true, [SkillType.UsableWhileMoving] = true, [SkillType.CreatesGroundEffect] = true, [SkillType.NoAttackInPlace] = true, [SkillType.GeneratesInfusion] = true, [SkillType.Movement] = true, [SkillType.GeneratesRemnants] = true, [SkillType.GamepadDoNotForceSkillAtLocation] = true, },
 	castTime = 0.5,
 	qualityStats = {
 		{ "shock_effect_+%", 0.5 },
@@ -16843,8 +16849,7 @@ skills["SacrificePlayer"] = {
 			statDescriptionScope = "harvester",
 			statMap = {
 				["harvester_minion_resummon_speed_+%_final"] = {
-					mod("MinionRevivalTime", "MORE", nil, 0, 0, { type = "GlobalEffect", effectType = "Buff" } ),
-					mult = -1,
+					mod("MinionRevivalSpeed", "MORE", nil, 0, 0, { type = "GlobalEffect", effectType = "Buff" } ),
 				},
 			},
 			baseFlags = {
@@ -16853,6 +16858,7 @@ skills["SacrificePlayer"] = {
 			stats = {
 				"harvester_minion_resummon_speed_+%_final",
 				"base_deal_no_damage",
+				"display_skill_reserves_in_all_weapon_sets",
 			},
 			levels = {
 				[1] = { -79, statInterpolation = { 1, }, actorLevel = 1, },
@@ -17352,44 +17358,44 @@ skills["SiphonElementsPlayer"] = {
 			levels = {
 				[1] = { 0, statInterpolation = { 1, }, actorLevel = 1, },
 				[2] = { 2, statInterpolation = { 1, }, actorLevel = 3.4519999027252, },
-				[3] = { 5, statInterpolation = { 1, }, actorLevel = 6.7670001983643, },
-				[4] = { 7, statInterpolation = { 1, }, actorLevel = 10.307999610901, },
-				[5] = { 10, statInterpolation = { 1, }, actorLevel = 14.074999809265, },
-				[6] = { 12, statInterpolation = { 1, }, actorLevel = 18.068000793457, },
-				[7] = { 15, statInterpolation = { 1, }, actorLevel = 22.287000656128, },
-				[8] = { 17, statInterpolation = { 1, }, actorLevel = 26.732000350952, },
-				[9] = { 20, statInterpolation = { 1, }, actorLevel = 31.40299987793, },
-				[10] = { 22, statInterpolation = { 1, }, actorLevel = 36.299999237061, },
-				[11] = { 25, statInterpolation = { 1, }, actorLevel = 41.423000335693, },
-				[12] = { 27, statInterpolation = { 1, }, actorLevel = 46.771999359131, },
-				[13] = { 30, statInterpolation = { 1, }, actorLevel = 52.34700012207, },
-				[14] = { 32, statInterpolation = { 1, }, actorLevel = 58.147998809814, },
-				[15] = { 35, statInterpolation = { 1, }, actorLevel = 64.175003051758, },
-				[16] = { 37, statInterpolation = { 1, }, actorLevel = 70.428001403809, },
-				[17] = { 40, statInterpolation = { 1, }, actorLevel = 76.906997680664, },
-				[18] = { 42, statInterpolation = { 1, }, actorLevel = 83.611999511719, },
-				[19] = { 45, statInterpolation = { 1, }, actorLevel = 90.542999267578, },
-				[20] = { 47, statInterpolation = { 1, }, actorLevel = 97.699996948242, },
-				[21] = { 50, statInterpolation = { 1, }, actorLevel = 105.08300018311, },
-				[22] = { 52, statInterpolation = { 1, }, actorLevel = 112.69200134277, },
-				[23] = { 55, statInterpolation = { 1, }, actorLevel = 120.52700042725, },
-				[24] = { 57, statInterpolation = { 1, }, actorLevel = 128.58799743652, },
-				[25] = { 60, statInterpolation = { 1, }, actorLevel = 136.875, },
-				[26] = { 62, statInterpolation = { 1, }, actorLevel = 145.38800048828, },
-				[27] = { 65, statInterpolation = { 1, }, actorLevel = 154.12699890137, },
-				[28] = { 67, statInterpolation = { 1, }, actorLevel = 163.09199523926, },
-				[29] = { 70, statInterpolation = { 1, }, actorLevel = 172.28300476074, },
-				[30] = { 72, statInterpolation = { 1, }, actorLevel = 181.69999694824, },
-				[31] = { 75, statInterpolation = { 1, }, actorLevel = 191.34300231934, },
-				[32] = { 77, statInterpolation = { 1, }, actorLevel = 201.21200561523, },
-				[33] = { 80, statInterpolation = { 1, }, actorLevel = 211.30700683594, },
-				[34] = { 82, statInterpolation = { 1, }, actorLevel = 221.62800598145, },
-				[35] = { 85, statInterpolation = { 1, }, actorLevel = 232.17500305176, },
-				[36] = { 87, statInterpolation = { 1, }, actorLevel = 242.94799804688, },
-				[37] = { 90, statInterpolation = { 1, }, actorLevel = 253.94700622559, },
-				[38] = { 92, statInterpolation = { 1, }, actorLevel = 265.17199707031, },
-				[39] = { 95, statInterpolation = { 1, }, actorLevel = 276.62298583984, },
-				[40] = { 97, statInterpolation = { 1, }, actorLevel = 288.29998779297, },
+				[3] = { 4, statInterpolation = { 1, }, actorLevel = 6.7670001983643, },
+				[4] = { 6, statInterpolation = { 1, }, actorLevel = 10.307999610901, },
+				[5] = { 8, statInterpolation = { 1, }, actorLevel = 14.074999809265, },
+				[6] = { 10, statInterpolation = { 1, }, actorLevel = 18.068000793457, },
+				[7] = { 12, statInterpolation = { 1, }, actorLevel = 22.287000656128, },
+				[8] = { 14, statInterpolation = { 1, }, actorLevel = 26.732000350952, },
+				[9] = { 16, statInterpolation = { 1, }, actorLevel = 31.40299987793, },
+				[10] = { 18, statInterpolation = { 1, }, actorLevel = 36.299999237061, },
+				[11] = { 20, statInterpolation = { 1, }, actorLevel = 41.423000335693, },
+				[12] = { 22, statInterpolation = { 1, }, actorLevel = 46.771999359131, },
+				[13] = { 24, statInterpolation = { 1, }, actorLevel = 52.34700012207, },
+				[14] = { 26, statInterpolation = { 1, }, actorLevel = 58.147998809814, },
+				[15] = { 28, statInterpolation = { 1, }, actorLevel = 64.175003051758, },
+				[16] = { 30, statInterpolation = { 1, }, actorLevel = 70.428001403809, },
+				[17] = { 32, statInterpolation = { 1, }, actorLevel = 76.906997680664, },
+				[18] = { 34, statInterpolation = { 1, }, actorLevel = 83.611999511719, },
+				[19] = { 36, statInterpolation = { 1, }, actorLevel = 90.542999267578, },
+				[20] = { 38, statInterpolation = { 1, }, actorLevel = 97.699996948242, },
+				[21] = { 40, statInterpolation = { 1, }, actorLevel = 105.08300018311, },
+				[22] = { 42, statInterpolation = { 1, }, actorLevel = 112.69200134277, },
+				[23] = { 44, statInterpolation = { 1, }, actorLevel = 120.52700042725, },
+				[24] = { 46, statInterpolation = { 1, }, actorLevel = 128.58799743652, },
+				[25] = { 48, statInterpolation = { 1, }, actorLevel = 136.875, },
+				[26] = { 50, statInterpolation = { 1, }, actorLevel = 145.38800048828, },
+				[27] = { 52, statInterpolation = { 1, }, actorLevel = 154.12699890137, },
+				[28] = { 54, statInterpolation = { 1, }, actorLevel = 163.09199523926, },
+				[29] = { 56, statInterpolation = { 1, }, actorLevel = 172.28300476074, },
+				[30] = { 58, statInterpolation = { 1, }, actorLevel = 181.69999694824, },
+				[31] = { 60, statInterpolation = { 1, }, actorLevel = 191.34300231934, },
+				[32] = { 62, statInterpolation = { 1, }, actorLevel = 201.21200561523, },
+				[33] = { 64, statInterpolation = { 1, }, actorLevel = 211.30700683594, },
+				[34] = { 66, statInterpolation = { 1, }, actorLevel = 221.62800598145, },
+				[35] = { 68, statInterpolation = { 1, }, actorLevel = 232.17500305176, },
+				[36] = { 70, statInterpolation = { 1, }, actorLevel = 242.94799804688, },
+				[37] = { 72, statInterpolation = { 1, }, actorLevel = 253.94700622559, },
+				[38] = { 74, statInterpolation = { 1, }, actorLevel = 265.17199707031, },
+				[39] = { 76, statInterpolation = { 1, }, actorLevel = 276.62298583984, },
+				[40] = { 78, statInterpolation = { 1, }, actorLevel = 288.29998779297, },
 			},
 		},
 	}
@@ -18606,6 +18612,11 @@ skills["SnapPlayer"] = {
 			incrementalEffectiveness = 0.12999999523163,
 			damageIncrementalEffectiveness = 0.0096000004559755,
 			statDescriptionScope = "shatter",
+			statMap = {
+				["snap_damage_+%_final_if_created_from_unique"] = {
+					mod("Damage", "MORE", nil, 0, 0, { type = "ActorCondition", actor = "enemy", var = "Unique" }),
+				},
+			},
 			baseFlags = {
 				area = true,
 				spell = true,
@@ -21030,8 +21041,10 @@ skills["TrinityPlayer"] = {
 				["trinity_damage_+%_final_to_grant_per_50_resonance"] = {
 					mod("ElementalDamage", "MORE", nil, 0, 0, { type = "Multiplier", var = "ResonanceCount", div = 30 },{ type = "GlobalEffect", effectType = "Buff", effectName = "Trinity" }),
 				},
-				["trinity_attack_speed_+%_while_all_resonance_is_at_least_250_to_grant"] = {
+				["trinity_skill_speed_+%_while_all_resonance_is_at_least_250_to_grant"] = {
 					mod("Speed", "INC", nil, 0, 0, { type = "MultiplierThreshold", var = "ResonanceCount", threshold = 250 },{ type = "GlobalEffect", effectType = "Buff", effectName = "Trinity" }),
+					mod("WarcrySpeed", "INC", nil, 0, KeywordFlag.Warcry, { type = "MultiplierThreshold", var = "ResonanceCount", threshold = 250 },{ type = "GlobalEffect", effectType = "Buff", effectName = "Trinity" }),
+					mod("TotemPlacementSpeed", "INC", nil, 0, 0, { type = "MultiplierThreshold", var = "ResonanceCount", threshold = 250 },{ type = "GlobalEffect", effectType = "Buff", effectName = "Trinity" }),
 				},
 				["quality_display_trinity_is_gem"] = {
 					-- Display only

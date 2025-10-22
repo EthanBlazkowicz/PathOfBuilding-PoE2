@@ -24,8 +24,8 @@ function calcs.initModDB(env, modDB)
 	modDB:NewMod("TotemColdResistMax", "BASE", 75, "Base")
 	modDB:NewMod("TotemLightningResistMax", "BASE", 75, "Base")
 	modDB:NewMod("TotemChaosResistMax", "BASE", 75, "Base")
-	modDB:NewMod("BaseBlockChanceMax", "OVERRIDE", data.characterConstants["object_inherent_base_maximum_block_%_from_ot"], "Base")
-	modDB:NewMod("BaseSpellBlockChanceMax", "OVERRIDE", data.characterConstants["object_inherent_base_maximum_block_%_from_ot"], "Base")
+	modDB:NewMod("BaseBlockChanceMax", "BASE", data.characterConstants["object_inherent_base_maximum_block_%_from_ot"], "Base")
+	modDB:NewMod("BaseSpellBlockChanceMax", "BASE", data.characterConstants["object_inherent_base_maximum_block_%_from_ot"], "Base")
 	modDB:NewMod("SpellDodgeChanceMax", "BASE", 75, "Base")
 	modDB:NewMod("ChargeDuration", "BASE", 15, "Base")
 	modDB:NewMod("PowerChargesMax", "BASE", data.characterConstants["max_power_charges"], "Base")
@@ -70,7 +70,8 @@ function calcs.initModDB(env, modDB)
 	modDB:NewMod("Damage", "MORE", -10, "Base", { type = "Condition", var = "Debilitated"})
 	modDB:NewMod("Condition:Burning", "FLAG", true, "Base", { type = "IgnoreCond" }, { type = "Condition", var = "Ignited" })
 	modDB:NewMod("Condition:Poisoned", "FLAG", true, "Base", { type = "IgnoreCond" }, { type = "MultiplierThreshold", var = "PoisonStack", threshold = 1 })
-	modDB:NewMod("ShockBase", "BASE", 20, "Base", { type = "ActorCondition", actor = "enemy", var = "Shocked" })
+	modDB:NewMod("ShockBase", "BASE", data.gameConstants["BaseShockMagnitude"], "Base", { type = "ActorCondition", actor = "enemy", var = "Shocked" })
+	modDB:NewMod("ChillBase", "BASE", 30, "Base", { type = "ActorCondition", actor = "enemy", var = "Chilled" })
 	modDB:NewMod("Blind", "FLAG", true, "Base", { type = "Condition", var = "Blinded" })
 	modDB:NewMod("Chill", "FLAG", true, "Base", { type = "Condition", var = "Chilled" })
 	modDB:NewMod("Freeze", "FLAG", true, "Base", { type = "Condition", var = "Frozen" })
@@ -602,7 +603,7 @@ function calcs.initEnv(build, mode, override, specEnv)
 		modDB:NewMod("Spirit", "BASE", 0, "Base")
 		modDB:NewMod("Devotion", "BASE", 0, "Base")
 		modDB:NewMod("Tribute", "BASE", 0, "Base")
-		modDB:NewMod("Evasion", "BASE", data.characterConstants["evasion_rating_per_level"] / 100, "Base", { type = "Multiplier", var = "Level", base = data.characterConstants["base_evasion_rating"] })
+		modDB:NewMod("Evasion", "BASE", data.characterConstants["base_evasion_rating"], "Base")
 		modDB:NewMod("Accuracy", "BASE", data.characterConstants["accuracy_rating_per_level"], "Base", { type = "Multiplier", var = "Level", base = -data.characterConstants["accuracy_rating_per_level"] })
 		modDB:NewMod("CritMultiplier", "BASE", data.characterConstants["base_critical_hit_damage_bonus"], "Base")
 		modDB:NewMod("DotMultiplier", "BASE", 50, "Base", { type = "Condition", var = "CriticalStrike" })
@@ -1139,7 +1140,7 @@ function calcs.initEnv(build, mode, override, specEnv)
 					else
 						env.itemModDB.multipliers["NonCorruptedItem"] = (env.itemModDB.multipliers["NonCorruptedItem"] or 0) + 1
 					end
-					local otherRing = items[(slotName == "Ring 1" and "Ring 2") or (slotName == "Ring 2" and "Ring 1") or (slotName == "Ring 3" and "Ring 2")]
+					local otherRing = items[(slotName == "Ring 1" and "Ring 2") or (slotName == "Ring 2" and "Ring 1")]
 					if otherRing and not otherRing.name:match("Kalandra's Touch") then
 						for _, mod in ipairs(otherRing.modList or otherRing.slotModList[slot.slotNum] or {}) do
 							-- Filter out SocketedIn type mods
